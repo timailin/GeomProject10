@@ -254,14 +254,14 @@ int main() {
                     if (event.mouseButton.button == sf::Mouse::Button::Left)
                         points.emplace_back(sf::Vector2i(event.mouseButton.x, event.mouseButton.y), SET_1);
                     else
-                        if(countpoint==1){
-                            circles.emplace_back(Point(sf::Vector2i(centerx, centery), SET_1), Point(sf::Vector2i(event.mouseButton.x, event.mouseButton.y), SET_1), SET_2);
-                            countpoint=0;
-                        }else{
-                            countpoint=1;
-                            centerx=event.mouseButton.x;
-                            centery=event.mouseButton.y;
-                        }
+                    if(countpoint==1){
+                        circles.emplace_back(Point(sf::Vector2i(centerx, centery), SET_1), Point(sf::Vector2i(event.mouseButton.x, event.mouseButton.y), SET_1), SET_2);
+                        countpoint=0;
+                    }else{
+                        countpoint=1;
+                        centerx=event.mouseButton.x;
+                        centery=event.mouseButton.y;
+                    }
                 }
             }
         }
