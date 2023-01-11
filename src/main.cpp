@@ -198,6 +198,12 @@ void RenderTask() {
 
 // главный метод
 int main() {
+
+    //переменные для обработки мышью
+    int countpoint=0;
+    double centerx=0;
+    double centery=0;
+
     // создаём окно для рисования
     sf::RenderWindow window(sf::VideoMode(WINDOW_SIZE_X, WINDOW_SIZE_Y), "Geometry Project 10");
     // задаём частоту перерисовки окна
@@ -209,15 +215,15 @@ int main() {
     setColor(color);
 
     //пробные объекты
-    points.push_back(Point(sf::Vector2i(180, 600), SET_1));
-    points.push_back(Point(sf::Vector2i(100, 700), SET_1));
-    points.push_back(Point(sf::Vector2i(200, 500), SET_2));
-    points.push_back(Point(sf::Vector2i(200, 700), SET_2));
-    circles.push_back(Circle(Point(sf::Vector2i(190, 550), SET_1),Point(sf::Vector2i(230, 558), SET_2), SET_1));
-    circles.push_back(Circle(Point(sf::Vector2i(460, 350), SET_1),Point(sf::Vector2i(290, 518), SET_2), SET_2));
-    lines.push_back(Line(Point(sf::Vector2i(460, 350), SET_1),Point(sf::Vector2i(290, 518), SET_2), SET_2));
-    lines.push_back(Line(Point(sf::Vector2i(234, 350), SET_1),Point(sf::Vector2i(310, 591), SET_2), SET_1));
-    linesegments.push_back(LineSegment(Point(sf::Vector2i(204, 450), SET_1),Point(sf::Vector2i(300, 591), SET_1)));
+    //points.push_back(Point(sf::Vector2i(180, 600), SET_1));
+    //points.push_back(Point(sf::Vector2i(100, 700), SET_1));
+    //points.push_back(Point(sf::Vector2i(200, 500), SET_2));
+    //points.push_back(Point(sf::Vector2i(200, 700), SET_2));
+    //circles.push_back(Circle(Point(sf::Vector2i(190, 550), SET_1),Point(sf::Vector2i(230, 558), SET_2), SET_1));
+    //circles.push_back(Circle(Point(sf::Vector2i(460, 350), SET_1),Point(sf::Vector2i(290, 518), SET_2), SET_2));
+    //lines.push_back(Line(Point(sf::Vector2i(460, 350), SET_1),Point(sf::Vector2i(290, 518), SET_2), SET_2));
+    //lines.push_back(Line(Point(sf::Vector2i(234, 350), SET_1),Point(sf::Vector2i(310, 591), SET_2), SET_1));
+    //linesegments.push_back(LineSegment(Point(sf::Vector2i(204, 450), SET_1),Point(sf::Vector2i(300, 591), SET_1)));
 
     // опорная точка окружности
     sf::Vector2i pointA = {230, 300};
@@ -239,6 +245,24 @@ int main() {
             if (event.type == sf::Event::Closed) {
                 // закрываем окно
                 window.close();
+            }
+            // если событие - это клик мышью
+            if (event.type == sf::Event::MouseButtonPressed) {
+                // если мышь не обрабатывается элементами imGui
+                if (!ImGui::GetIO().WantCaptureMouse) {
+                    // если левая кнопка мыши
+                    if (event.mouseButton.button == sf::Mouse::Button::Left)
+                        points.emplace_back(sf::Vector2i(event.mouseButton.x, event.mouseButton.y), SET_1);
+                    else
+                        if(countpoint==1){
+                            circles.emplace_back(Point(sf::Vector2i(centerx, centery), SET_1), Point(sf::Vector2i(event.mouseButton.x, event.mouseButton.y), SET_1), SET_2);
+                            countpoint=0;
+                        }else{
+                            countpoint=1;
+                            centerx=event.mouseButton.x;
+                            centery=event.mouseButton.y;
+                        }
+                }
             }
         }
 
