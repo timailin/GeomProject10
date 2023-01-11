@@ -31,6 +31,8 @@ struct Point {
     Point(const sf::Vector2i &pos, int setNum) : pos(pos), setNum(setNum) {
     }
 };
+
+
 //окружность
 struct Circle {
     // положение
@@ -51,6 +53,7 @@ struct Circle {
         ypos=A1.y;
     };
 };
+
 
 //прямая
 struct Line{
@@ -78,6 +81,22 @@ struct Line{
     };
 };
 
+//отрезок
+struct LineSegment{
+    // положение
+    Point A;
+    // положение
+    Point B;
+    sf::Vector2i A1=A.pos;
+    sf::Vector2i B1=B.pos;
+    LineSegment(const Point A, Point B) : A(A), B(B) {
+        double Ax=A1.x;
+        double Ay=A1.y;
+        double Bx=B1.x;
+        double By=B1.y;
+    };
+};
+
 
 
 // динамический список точек
@@ -88,6 +107,9 @@ std::vector <Circle> circles;
 
 // динамический список прямых
 std::vector <Line> lines;
+
+// динамический список отрезков
+std::vector <LineSegment> linesegments;
 
 // цвет фона
 static sf::Color bgColor;
@@ -158,6 +180,17 @@ void RenderTask() {
         );
     }
 
+    // перебираем прямые из динамического массива отрезков
+    for (auto linesegment: linesegments) {
+        // добавляем в список рисования отезок
+        pDrawList->AddLine(
+                sf::Vector2i(linesegment.A1.x, linesegment.A1.y),
+                sf::Vector2i(linesegment.B1.x, linesegment.B1.y),
+                ImColor(19, 19, 228) ,
+                0.5f
+        );
+    }
+
 
     // заканчиваем рисование окна
     ImGui::End();
@@ -184,6 +217,7 @@ int main() {
     circles.push_back(Circle(Point(sf::Vector2i(460, 350), SET_1),Point(sf::Vector2i(290, 518), SET_2), SET_2));
     lines.push_back(Line(Point(sf::Vector2i(460, 350), SET_1),Point(sf::Vector2i(290, 518), SET_2), SET_2));
     lines.push_back(Line(Point(sf::Vector2i(234, 350), SET_1),Point(sf::Vector2i(310, 591), SET_2), SET_1));
+    linesegments.push_back(LineSegment(Point(sf::Vector2i(204, 450), SET_1),Point(sf::Vector2i(300, 591), SET_1)));
 
     // опорная точка окружности
     sf::Vector2i pointA = {230, 300};
