@@ -40,17 +40,22 @@ struct Circle {
     // номер множества
     int setNum;
     double radius;
+    double xpos;
+    double ypos;
     // конструктор
     Circle(const Point A, Point B, int setNum) : A(A), B(B), setNum(setNum) {
         sf::Vector2i C=A.pos-B.pos;
+        sf::Vector2i A1=A.pos;
         radius=sqrt(C.x*C.x+C.y*C.y);
+        xpos=A1.x;
+        ypos=A1.y;
     };
 };
 
 // динамический список точек
 std::vector<Point> points;
 
-// динамический список центров
+// динамический список кругов
 std::vector <Circle> circles;
 
 // цвет фона
@@ -100,6 +105,14 @@ void RenderTask() {
                 20
         );
     }
+    for (auto circle: circles) {
+        // добавляем в список рисования круг
+        pDrawList->AddCircle(
+                sf::Vector2i(circle.xpos, circle.ypos),
+                circle.radius,
+                circle.setNum == SET_1 ? ImColor(200, 100, 150) : ImColor(100, 200, 150)
+        );
+    }
 
 
     // заканчиваем рисование окна
@@ -122,6 +135,7 @@ int main() {
     points.push_back(Point(sf::Vector2i(100, 700), SET_1));
     points.push_back(Point(sf::Vector2i(200, 500), SET_2));
     points.push_back(Point(sf::Vector2i(200, 700), SET_2));
+    circles.push_back(Circle(Point(sf::Vector2i(180, 600), SET_1),Point(sf::Vector2i(200, 500), SET_2), SET_1));
     // опорная точка окружности
     sf::Vector2i pointA = {230, 300};
 
