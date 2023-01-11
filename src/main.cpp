@@ -52,11 +52,42 @@ struct Circle {
     };
 };
 
+//прямая
+struct Line{
+    // положение
+    Point A;
+    // положение
+    Point B;
+    int setNum;
+    sf::Vector2i A1=A.pos;
+    sf::Vector2i B1=B.pos;
+    double maxDistance = std::sqrt(WINDOW_SIZE_X * WINDOW_SIZE_X + WINDOW_SIZE_Y * WINDOW_SIZE_Y);
+    sf::Vector2i renderPointA = sf::Vector2i(
+            A1.x + (int) ((A1.x - B1.x) * maxDistance),
+            A1.y + (int) ((A1.y - B1.y) * maxDistance)
+    );
+    sf::Vector2i renderPointB = sf::Vector2i(
+            A1.x - (int) ((A1.x - B1.x) * maxDistance),
+            A1.y - (int) ((A1.y - B1.y) * maxDistance)
+    );
+    Line(const Point A, Point B, int setNum) : A(A),B(B), setNum(setNum) {
+        double renderAx=renderPointA.x;
+        double renderAy=renderPointA.y;
+        double renderBx=renderPointB.x;
+        double renderBy=renderPointB.y;
+    };
+};
+
+
+
 // динамический список точек
 std::vector<Point> points;
 
 // динамический список кругов
 std::vector <Circle> circles;
+
+// динамический список прямых
+std::vector <Line> lines;
 
 // цвет фона
 static sf::Color bgColor;
@@ -105,12 +136,25 @@ void RenderTask() {
                 20
         );
     }
+
+    // перебираем окружности из динамического массива точек
     for (auto circle: circles) {
-        // добавляем в список рисования круг
+        // добавляем в список рисования окружность
         pDrawList->AddCircle(
                 sf::Vector2i(circle.xpos, circle.ypos),
                 circle.radius,
                 circle.setNum == SET_1 ? ImColor(200, 100, 150) : ImColor(100, 200, 150)
+        );
+    }
+
+    // перебираем прямые из динамического массива точек
+    for (auto line: lines) {
+        // добавляем в список рисования отезок
+        pDrawList->AddLine(
+                sf::Vector2i(line.renderPointA.x, line.renderPointA.y),
+                sf::Vector2i(line.renderPointB.x, line.renderPointB.y),
+                line.setNum == SET_1 ? ImColor(200, 100, 150) : ImColor(100, 200, 150),
+                0.5f
         );
     }
 
@@ -131,11 +175,16 @@ int main() {
     // задаём цвет фона
     setColor(color);
 
+    //пробные объекты
     points.push_back(Point(sf::Vector2i(180, 600), SET_1));
     points.push_back(Point(sf::Vector2i(100, 700), SET_1));
     points.push_back(Point(sf::Vector2i(200, 500), SET_2));
     points.push_back(Point(sf::Vector2i(200, 700), SET_2));
-    circles.push_back(Circle(Point(sf::Vector2i(180, 600), SET_1),Point(sf::Vector2i(200, 500), SET_2), SET_1));
+    circles.push_back(Circle(Point(sf::Vector2i(190, 550), SET_1),Point(sf::Vector2i(230, 558), SET_2), SET_1));
+    circles.push_back(Circle(Point(sf::Vector2i(460, 350), SET_1),Point(sf::Vector2i(290, 518), SET_2), SET_2));
+    lines.push_back(Line(Point(sf::Vector2i(460, 350), SET_1),Point(sf::Vector2i(290, 518), SET_2), SET_2));
+    lines.push_back(Line(Point(sf::Vector2i(234, 350), SET_1),Point(sf::Vector2i(310, 591), SET_2), SET_1));
+
     // опорная точка окружности
     sf::Vector2i pointA = {230, 300};
 
