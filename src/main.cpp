@@ -98,6 +98,8 @@ struct LineSegment{
 };
 
 
+// буфер, хранящий координаты последней добавленной вершины
+int lastAddPosBuf[2] = {0, 0};
 
 // динамический список точек
 std::vector<Point> points;
@@ -125,6 +127,11 @@ static void setColor(float *pDouble) {
 
 // рисование параметров цвета
 void ShowBackgroundSetting() {
+    // если не раскрыт список `Background`
+    if (!ImGui::CollapsingHeader("Background"))
+        // заканчиваем выполнение
+        return;
+
     // Инструмент выбора цвета
     if (ImGui::ColorEdit3("Background color", color)) {
         // код вызывается при изменении значения
@@ -132,6 +139,34 @@ void ShowBackgroundSetting() {
         setColor(color);
     }
     // конец рисование окна
+}
+
+// ручное добавление элементов
+void ShowAddElem() {
+
+    // если не раскрыта панель `Add Elem`
+    if (!ImGui::CollapsingHeader("Add Elem"))
+        // заканчиваем выполнение
+        return;
+
+
+    // Инструмент выбора цвета
+    if (ImGui::DragInt2("Coords", lastAddPosBuf)) {
+        // никаких действий не требуется, достаточно
+        // тех изменений буфера, которые imGui выполняет
+        // автоматически
+    }
+
+    // если нажата кнопка `Set 1`
+    if (ImGui::Button("Point"))
+        // добавляем то добавляем в список точку, принадлежащую первому множеству
+        points.emplace_back(Point(sf::Vector2i(lastAddPosBuf[0], lastAddPosBuf[1]), SET_1));
+
+    // если нажата кнопка `Set 2`
+    if (ImGui::Button("Circle"))
+        // добавляем то добавляем в список точку, принадлежащую второму множеству
+        points.emplace_back(Point(sf::Vector2i(lastAddPosBuf[0], lastAddPosBuf[1]), SET_2));
+
 }
 
 
@@ -250,6 +285,9 @@ int main() {
             if (event.type == sf::Event::MouseButtonPressed) {
                 // если мышь не обрабатывается элементами imGui
                 if (!ImGui::GetIO().WantCaptureMouse) {
+                    // меняем координаты последней добавленной точки
+                    lastAddPosBuf[0] = event.mouseButton.x;
+                    lastAddPosBuf[1] = event.mouseButton.y;
                     // если левая кнопка мыши
                     if (event.mouseButton.button == sf::Mouse::Button::Left)
                         points.emplace_back(sf::Vector2i(event.mouseButton.x, event.mouseButton.y), SET_1);
@@ -278,9 +316,12 @@ int main() {
         // создаём окно управления
         ImGui::Begin("Control");
 
+
+
         // рисование параметров цвета
         ShowBackgroundSetting();
-
+        // ручное добавление элементов
+        ShowAddElem();
         // конец рисования окна
         ImGui::End();
 
