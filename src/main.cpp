@@ -30,8 +30,17 @@ struct Point {
     // конструктор
     Point(const sf::Vector2i &pos, int setNum) : pos(pos), setNum(setNum) {
     }
-};
 
+    // получить случайную точку
+    static Point randomPoint() {
+        return Point(sf::Vector2i(
+                             rand() % WINDOW_SIZE_X,
+                             rand() % WINDOW_SIZE_Y),
+                     SET_1
+        );
+
+    };
+};
 
 //окружность
 struct Circle {
@@ -52,6 +61,17 @@ struct Circle {
         xpos=A1.x;
         ypos=A1.y;
     };
+    // получить случайную точку
+    static Circle randomCircle() {
+        return Circle(Point(sf::Vector2i(
+                             rand() % WINDOW_SIZE_X,
+                             rand() % WINDOW_SIZE_Y),SET_1),
+                      Point(sf::Vector2i(
+                              rand() % WINDOW_SIZE_X,
+                              rand() % WINDOW_SIZE_Y),SET_1),
+                     SET_2
+        );
+    }
 };
 
 
@@ -125,6 +145,69 @@ static void setColor(float *pDouble) {
     bgColor.r = static_cast<sf::Uint8>(pDouble[0] * 255.f);
     bgColor.g = static_cast<sf::Uint8>(pDouble[1] * 255.f);
     bgColor.b = static_cast<sf::Uint8>(pDouble[2] * 255.f);
+}
+
+// добавить заданное кол-во случайных точек
+void randomizePoints(int cnt) {
+    for (int i = 0; i < cnt; i++) {
+        points.emplace_back(Point::randomPoint());
+    }
+}
+int lastRandoCntBufPoints[1] = {10};
+
+// добавить заданное кол-во случайных окружностей
+void randomizeCircles(int cnt) {
+    for (int i = 0; i < cnt; i++) {
+        circles.emplace_back(Circle::randomCircle());
+    }
+}
+int lastRandoCntBufCircles[1] = {10};
+
+void ShowRandomize() {
+    // если не раскрыта панель `Randomize`
+    if (!ImGui::CollapsingHeader("Randomize"))
+        // заканчиваем выполнение
+        return;
+
+    // первый элемент в строке
+    ImGui::PushID(0);
+
+    // Инструмент выбора кол-ва точек
+    if (ImGui::DragInt("Count", lastRandoCntBufPoints, 0.1, 0, 100)) {
+
+    }
+    // восстанавливаем буффер id
+    ImGui::PopID();
+    // следующий элемент будет на той же строчке
+    ImGui::SameLine();
+    // второй элемент
+    ImGui::PushID(1);
+    // создаём кнопку добавления точек
+    if (ImGui::Button("Add Points"))
+        // по клику добавляем заданное число случайных точек
+        randomizePoints(lastRandoCntBufPoints[0]);
+    ImGui::PopID();
+
+
+    //то же, только для прямых
+    // первый элемент в строке
+    ImGui::PushID(0);
+
+    // Инструмент выбора кол-ва окружностей
+    if (ImGui::DragInt("Count", lastRandoCntBufCircles, 0.1, 0, 100)) {
+
+    }
+    // восстанавливаем буффер id
+    ImGui::PopID();
+    // следующий элемент будет на той же строчке
+    ImGui::SameLine();
+    // второй элемент
+    ImGui::PushID(1);
+    // создаём кнопку добавления окружностей
+    if (ImGui::Button("Add Circles"))
+        // по клику добавляем заданное число случайных точек
+        randomizeCircles(lastRandoCntBufCircles[0]);
+    ImGui::PopID();
 }
 
 // рисование параметров цвета
@@ -343,6 +426,8 @@ int main() {
         ShowBackgroundSetting();
         // ручное добавление элементов
         ShowAddElem();
+        // добавление случайных точек
+        ShowRandomize();
         // конец рисования окна
         ImGui::End();
 
