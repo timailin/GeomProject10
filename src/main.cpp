@@ -100,6 +100,8 @@ struct LineSegment{
 
 // буфер, хранящий координаты последней добавленной вершины
 int lastAddPosBuf[2] = {0, 0};
+int lastAddPosBufCenter[2] = {0, 0};
+int lastAddPosBufPoint[2] = {0, 0};
 
 // динамический список точек
 std::vector<Point> points;
@@ -150,22 +152,37 @@ void ShowAddElem() {
         return;
 
 
-    // Инструмент выбора цвета
-    if (ImGui::DragInt2("Coords", lastAddPosBuf)) {
+
+    if (ImGui::DragInt2("Coords", lastAddPosBuf, 0.5f, 0, std::min(WINDOW_SIZE_X, WINDOW_SIZE_Y))) {
         // никаких действий не требуется, достаточно
         // тех изменений буфера, которые imGui выполняет
         // автоматически
     }
 
-    // если нажата кнопка `Set 1`
+    // если нажата кнопка `Point`
     if (ImGui::Button("Point"))
         // добавляем то добавляем в список точку, принадлежащую первому множеству
         points.emplace_back(Point(sf::Vector2i(lastAddPosBuf[0], lastAddPosBuf[1]), SET_1));
 
-    // если нажата кнопка `Set 2`
+
+
+    if (ImGui::DragInt2("Coords of center", lastAddPosBufCenter, 0.5f, 0, std::min(WINDOW_SIZE_X, WINDOW_SIZE_Y))) {
+        // никаких действий не требуется, достаточно
+        // тех изменений буфера, которые imGui выполняет
+        // автоматически
+    }
+
+
+    if (ImGui::DragInt2("Coords of point", lastAddPosBufPoint, 0.5f, 0, std::min(WINDOW_SIZE_X, WINDOW_SIZE_Y))) {
+        // никаких действий не требуется, достаточно
+        // тех изменений буфера, которые imGui выполняет
+        // автоматически
+    }
+
+    // если нажата кнопка `Circle`
     if (ImGui::Button("Circle"))
         // добавляем то добавляем в список точку, принадлежащую второму множеству
-        points.emplace_back(Point(sf::Vector2i(lastAddPosBuf[0], lastAddPosBuf[1]), SET_2));
+        circles.emplace_back(Circle(Point(sf::Vector2i(lastAddPosBufCenter[0], lastAddPosBufCenter[1]), SET_1),Point(sf::Vector2i(lastAddPosBufPoint[0], lastAddPosBufPoint[1]), SET_1), SET_2));
 
 }
 
@@ -288,6 +305,10 @@ int main() {
                     // меняем координаты последней добавленной точки
                     lastAddPosBuf[0] = event.mouseButton.x;
                     lastAddPosBuf[1] = event.mouseButton.y;
+                    lastAddPosBufCenter[0] = event.mouseButton.x;
+                    lastAddPosBufCenter[1] = event.mouseButton.y;
+                    lastAddPosBufPoint[0] = event.mouseButton.x;
+                    lastAddPosBufPoint[1] = event.mouseButton.y;
                     // если левая кнопка мыши
                     if (event.mouseButton.button == sf::Mouse::Button::Left)
                         points.emplace_back(sf::Vector2i(event.mouseButton.x, event.mouseButton.y), SET_1);
