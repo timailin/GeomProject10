@@ -140,6 +140,9 @@ std::vector <Line> lines;
 // динамический список отрезков
 std::vector <LineSegment> linesegments;
 
+// динамический список точек
+std::vector<Point> pointsanswer;
+
 // цвет фона
 static sf::Color bgColor;
 // значение цвета по умолчанию
@@ -233,26 +236,35 @@ void ShowBackgroundSetting() {
 
 //решение
 void Solve() {
-    double rast,maxrast,x1,x2,y1,y2,a1,a2,b1,b2, len, maxlen, xans1,xans2,yans1, yans2;
+    double rast,maxrast,x1,x2,y1,y2,a1,a2,b1,b2, len, maxlen=0, xans1,xans2,yans1, yans2, x3,y3,x4,y4,a3,a4,b3,b4;
     for (auto A:points){
         for (auto B:points){
             for (auto C:circles){
-                double x3=A.pos.x;
-                double y3=A.pos.y;
-                double x4=B.pos.x;
-                double y4=B.pos.y;
-                double a3=C.xpos;
-                double b3=C.ypos;
-                double a4=C.rxpos;
-                double b4=C.rypos;
-                rast=(a3*(y3-y4)+b3*(x3-x4)+x3*y4-y3*x4)/sqrt(a3*a3+b3*b3)
-                len=(a3-a4)*(a3-a4)+(b3-b4)*(b3-b4)-rast*rast;
-                if(len>maxlen){
-                    maxlen=len;
-                    maxrast=rast;
-                    x1=x3; x2=x4; y1=y3; y2=y4; a1=a3; a2=a4; b1=b3; b2=b4;
-                }
+                x3=A.pos.x;
+                y3=A.pos.y;
+                x4=B.pos.x;
+                y4=B.pos.y;
+                a3=C.xpos;
+                b3=C.ypos;
+                a4=C.rxpos;
+                b4=C.rypos;
+                if ((x3!=x4)or(y3!=y4))
+                {
+                    rast = (a3 * (y3 - y4) + b3 * (x4 - x3) + x3 * y4 - y3 * x4) / sqrt((y3-y4) * (y3-y4)+ (x4 - x3) * (x4 - x3));
+                    len = (a3 - a4) * (a3 - a4) + (b3 - b4) * (b3 - b4) - rast * rast;
+                    if (len > maxlen) {
+                        maxlen = len;
+                        x1 = x3;
+                        x2 = x4;
+                        y1 = y3;
+                        y2 = y4;
+                        a1 = a3;
+                        a2 = a4;
+                        b1 = b3;
+                        b2 = b4;
 
+                    }
+                }
             }
         }
     }
@@ -269,9 +281,45 @@ void Solve() {
         xans2=(-l-pow(discriminant, 0.5))/(2*k);
         yans2=-(p*xans2+s)/q;
     }
+    if(maxlen!=0){
+        pointsanswer.push_back(Point(sf::Vector2i(xans1, yans1), SET_1));
+        pointsanswer.push_back(Point(sf::Vector2i(xans2, yans2), SET_1));
+        lines.push_back(Line(Point(sf::Vector2i(xans1, yans1), SET_1),Point(sf::Vector2i(xans2, yans2), SET_1), SET_1));
+        linesegments.push_back(LineSegment(Point(sf::Vector2i(xans1, yans1), SET_1),Point(sf::Vector2i(xans2, yans2), SET_1)));}
+
 };
 
 
+// вывод задачи
+void ShowSolve() {
+    // если не раскрыта панель `Solve`
+    if (!ImGui::CollapsingHeader("Solve"))
+        return;
+    // первый элемент в линии
+    ImGui::PushID(0);
+    // создаём кнопку решения
+    if (ImGui::Button("Solve")) {
+        Solve();
+    }
+
+    // восстанавливаем буфер id
+    ImGui::PopID();
+
+    // следующий элемент будет на той же строчке
+    ImGui::SameLine();
+    // второй элемент
+    ImGui::PushID(1);
+
+    // создаём кнопку очистки
+    if (ImGui::Button("Clear")) {
+        // удаляем все точки и окружности
+        points.clear();
+        circles.clear();
+        pointsanswer.clear();
+    }
+    // восстанавливаем буфер id
+    ImGui::PopID();
+}
 
 
 
@@ -344,7 +392,7 @@ void RenderTask() {
         );
     }
 
-    // перебираем окружности из динамического массива точек
+    // перебираем окружности из динамического массива окружностей
     for (auto circle: circles) {
         // добавляем в список рисования окружность
         pDrawList->AddCircle(
@@ -354,26 +402,36 @@ void RenderTask() {
         );
     }
 
-    // перебираем прямые из динамического массива точек
-    for (auto line: lines) {
-        // добавляем в список рисования отезок
-        pDrawList->AddLine(
-                sf::Vector2i(line.renderPointA.x, line.renderPointA.y),
-                sf::Vector2i(line.renderPointB.x, line.renderPointB.y),
-                line.setNum == SET_1 ? ImColor(200, 100, 150) : ImColor(100, 200, 150),
-                0.5f
-        );
-    }
 
-    // перебираем прямые из динамического массива отрезков
-    for (auto linesegment: linesegments) {
-        // добавляем в список рисования отезок
-        pDrawList->AddLine(
-                sf::Vector2i(linesegment.A1.x, linesegment.A1.y),
-                sf::Vector2i(linesegment.B1.x, linesegment.B1.y),
-                ImColor(19, 19, 228) ,
-                0.5f
+
+    for (auto point: pointsanswer) {
+        // добавляем в список рисования круг
+        pDrawList->AddCircleFilled(
+                sf::Vector2i(point.pos.x, point.pos.y),
+                3,
+                ImColor(190, 245, 13),
+                20
         );
+        // перебираем прямые из динамического массива прямых
+        for (auto line: lines) {
+            // добавляем в список рисования прямую
+            pDrawList->AddLine(
+                    sf::Vector2i(line.renderPointA.x, line.renderPointA.y),
+                    sf::Vector2i(line.renderPointB.x, line.renderPointB.y),
+                    ImColor(0, 0, 255),
+                    0.75f
+            );
+        }
+        // перебираем отрезков из динамического массива отрезков
+        for (auto linesegment: linesegments) {
+            // добавляем в список рисования отезок
+            pDrawList->AddLine(
+                    sf::Vector2i(linesegment.A1.x, linesegment.A1.y),
+                    sf::Vector2i(linesegment.B1.x, linesegment.B1.y),
+                    ImColor(255, 0, 0) ,
+                    1
+            );
+        }
     }
 
 
@@ -478,6 +536,8 @@ int main() {
         ShowAddElem();
         // добавление случайных точек
         ShowRandomize();
+        // решение задачи
+        ShowSolve();
         // конец рисования окна
         ImGui::End();
 
