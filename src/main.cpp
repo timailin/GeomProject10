@@ -5,7 +5,7 @@
 #include <imgui-SFML.h>
 #include <imgui.h>
 #include <valarray>
-
+#include <iostream>
 // первое множество
 static const int SET_1 = 0;
 // второе множество
@@ -53,13 +53,18 @@ struct Circle {
     double radius;
     double xpos;
     double ypos;
+    double rxpos;
+    double rypos;
     // конструктор
     Circle(const Point A, Point B, int setNum) : A(A), B(B), setNum(setNum) {
         sf::Vector2i C=A.pos-B.pos;
         sf::Vector2i A1=A.pos;
+        sf::Vector2i A2=B.pos;
         radius=sqrt(C.x*C.x+C.y*C.y);
         xpos=A1.x;
         ypos=A1.y;
+        rxpos=A2.x;
+        rypos=A2.y;
     };
     // получить случайную точку
     static Circle randomCircle() {
@@ -225,6 +230,51 @@ void ShowBackgroundSetting() {
     }
     // конец рисование окна
 }
+
+//решение
+void Solve() {
+    double rast,maxrast,x1,x2,y1,y2,a1,a2,b1,b2, len, maxlen;
+    for (auto A:points){
+        for (auto B:points){
+            for (auto C:circles){
+                double x3=A.pos.x;
+                double y3=A.pos.y;
+                double x4=B.pos.x;
+                double y4=B.pos.y;
+                double a3=C.xpos;
+                double b3=C.ypos;
+                double a4=C.rxpos;
+                double b4=C.rypos;
+                rast=(a3*(y3-y4)+b3*(x3-x4)+x3*y4-y3*x4)/sqrt(a3*a3+b3*b3)
+                len=(a3-a4)*(a3-a4)+(b3-b4)*(b3-b4)-rast*rast;
+                if(len>maxlen){
+                    maxlen=len;
+                    maxrast=rast;
+                    x1=x3; x2=x4; y1=y3; y2=y4; a1=a3; a2=a4; b1=b3; b2=b4;
+                }
+
+            }
+        }
+    }
+    double r=(a1-a2)*(a1-a2)+(b1-b1)*(b1-b2);
+    double p=y1-y2; double q=x2-x1; double s=x1*y2-y1*x2;
+    //коэффициенты квадратного уравнения
+    double k=1+p*p/(q*q);
+    double l=-2*a1+2*p*s/(q*q)+2*b1*p/q;
+    double m=a1*a1+b1*b1+s*s/(q*q)+2*b1*s/q-r;
+    double discriminant=l*l-4*m*k;
+    if(discriminant>0){
+        double xans1=(-l+sqrt(discriminant))/(2*k);
+        double yans1=-(p*xans1+s)/q;
+        double xans2=(-l-sqrt(discriminant))/(2*k);
+        double yans2=-(p*xans2+s)/q;
+    }
+};
+
+
+
+
+
 
 // ручное добавление элементов
 void ShowAddElem() {
