@@ -233,7 +233,7 @@ void ShowBackgroundSetting() {
 
 //решение
 void Solve() {
-    double rast,maxrast,x1,x2,y1,y2,a1,a2,b1,b2, len, maxlen;
+    double rast,maxrast,x1,x2,y1,y2,a1,a2,b1,b2, len, maxlen, xans1,xans2,yans1, yans2;
     for (auto A:points){
         for (auto B:points){
             for (auto C:circles){
@@ -256,18 +256,18 @@ void Solve() {
             }
         }
     }
-    double r=(a1-a2)*(a1-a2)+(b1-b1)*(b1-b2);
+    double r=(a1-a2)*(a1-a2)+(b1-b2)*(b1-b2);
     double p=y1-y2; double q=x2-x1; double s=x1*y2-y1*x2;
     //коэффициенты квадратного уравнения
     double k=1+p*p/(q*q);
     double l=-2*a1+2*p*s/(q*q)+2*b1*p/q;
     double m=a1*a1+b1*b1+s*s/(q*q)+2*b1*s/q-r;
     double discriminant=l*l-4*m*k;
-    if(discriminant>0){
-        double xans1=(-l+sqrt(discriminant))/(2*k);
-        double yans1=-(p*xans1+s)/q;
-        double xans2=(-l-sqrt(discriminant))/(2*k);
-        double yans2=-(p*xans2+s)/q;
+    if(discriminant>=0){
+        xans1=(-l+pow(discriminant, 0.5))/(2*k);
+        yans1=-(p*xans1+s)/q;
+        xans2=(-l-pow(discriminant, 0.5))/(2*k);
+        yans2=-(p*xans2+s)/q;
     }
 };
 
