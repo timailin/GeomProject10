@@ -149,8 +149,9 @@ std::vector <Line> lines;
 // динамический список отрезков
 std::vector <LineSegment> linesegments;
 
-// динамический список точек
+// динамический список точек для ответа
 std::vector<Point> pointsanswer;
+
 
 // цвет фона
 static sf::Color bgColor;
@@ -416,7 +417,10 @@ void Solve() {
         pointsanswer.push_back(Point(sf::Vector2i(xans1, yans1), SET_1));
         pointsanswer.push_back(Point(sf::Vector2i(xans2, yans2), SET_1));
         lines.push_back(Line(Point(sf::Vector2i(xans1, yans1), SET_1),Point(sf::Vector2i(xans2, yans2), SET_1), SET_1));
-        linesegments.push_back(LineSegment(Point(sf::Vector2i(xans1, yans1), SET_1),Point(sf::Vector2i(xans2, yans2), SET_1)));}
+        linesegments.push_back(LineSegment(Point(sf::Vector2i(xans1, yans1), SET_1),Point(sf::Vector2i(xans2, yans2), SET_1)));
+        circles.push_back(Circle(Point(sf::Vector2i(a1, b1), SET_1),Point(sf::Vector2i(a2, b2), SET_1), SET_1));
+        pointsanswer.push_back(Point(sf::Vector2i(x1, y1), SET_2));
+        pointsanswer.push_back(Point(sf::Vector2i(x2, y2), SET_2));}
 
 };
 
