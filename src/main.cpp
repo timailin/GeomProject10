@@ -69,12 +69,12 @@ struct Circle {
     // получить случайную точку
     static Circle randomCircle() {
         return Circle(Point(sf::Vector2i(
-                             rand() % WINDOW_SIZE_X,
-                             rand() % WINDOW_SIZE_Y),SET_1),
+                              rand() % WINDOW_SIZE_X,
+                              rand() % WINDOW_SIZE_Y),SET_1),
                       Point(sf::Vector2i(
                               rand() % WINDOW_SIZE_X,
                               rand() % WINDOW_SIZE_Y),SET_1),
-                     SET_2
+                      SET_2
         );
     }
 };
@@ -316,6 +316,8 @@ void ShowSolve() {
         points.clear();
         circles.clear();
         pointsanswer.clear();
+        lines.clear();
+        linesegments.clear();
     }
     // восстанавливаем буфер id
     ImGui::PopID();
