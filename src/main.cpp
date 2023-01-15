@@ -482,7 +482,7 @@ void ShowHelp() {
                       "It is required to find such a line and such a circle\n"
                       "that this line intersects the indicated circle,\n"
                       "and at the same time the length of the line segment\n"
-                      "inside the circle is maximum\n");
+                      "inside the circle is maximum.\n");
     // разделитель
     ImGui::Separator();
 }
