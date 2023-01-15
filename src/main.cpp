@@ -455,6 +455,34 @@ void ShowSolve() {
 }
 
 
+// помощь
+void ShowHelp() {
+    if (!ImGui::CollapsingHeader("Help"))
+        return;
+
+    // первый заголовок
+    ImGui::Text("ABOUT THIS PROJECT:");
+    // первый элемент списка
+    ImGui::BulletText("Author Ilin Timofey 10-1");
+    // второй элемент списка
+    ImGui::BulletText("Powered by SFML+ImGui");
+    // разделитель
+    ImGui::Separator();
+
+    // второй заголовок
+    ImGui::Text("TASK:");
+    // первый элемент списка(многострочный)
+    ImGui::BulletText("A set of points and a set of circles are given.\n"
+                      "The set of points forms all possible lines\n"
+                      "that can be constructed by pairs of points in the set.\n"
+                      "It is required to find such a line and such a circle\n"
+                      "that this line intersects the indicated circle,\n"
+                      "and at the same time the length of the line segment\n"
+                      "inside the circle is maximum\n");
+    // разделитель
+    ImGui::Separator();
+}
+
 
 
 // ручное добавление элементов
@@ -673,6 +701,8 @@ int main() {
         ShowFiles();
         // решение задачи
         ShowSolve();
+        // решение задачи
+        ShowHelp();
         // конец рисования окна
         ImGui::End();
 
