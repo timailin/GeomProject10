@@ -123,11 +123,14 @@ struct LineSegment{
     };
 };
 
-// путь к файлу вывода
-static const char OUTPUT_PATH[255] = "H:/MyProject/Files/out.txt";
-// путь к файлу ввода
-static const char INPUT_PATH[255] = "H:/MyProject/Files/in.txt";
-
+// путь к файлу вывода точек
+static const char OUTPUT_PATH[255] = "H:/MyProject/Files/points out.txt";
+// путь к файлу ввода точек
+static const char INPUT_PATH[255] = "H:/MyProject/Files/points in.txt";
+// путь к файлу вывода окружностей
+static const char OUTPUT_PATH1[255] = "H:/MyProject/Files/circles out.txt";
+// путь к файлу ввода окружностей
+static const char INPUT_PATH1[255] = "H:/MyProject/Files/circles in.txt";
 
 // буфер, хранящий координаты последней добавленной вершины
 int lastAddPosBuf[2] = {0, 0};
@@ -224,8 +227,8 @@ void ShowRandomize() {
     ImGui::PopID();
 }
 
-// загрузка из файла
-void loadFromFile() {
+// загрузка точек из файла
+void loadPointsFromFile() {
     // открываем поток данных для чтения из файла
     std::ifstream input(INPUT_PATH);
     // очищаем массив точек
@@ -242,8 +245,28 @@ void loadFromFile() {
     input.close();
 }
 
-// запись в файл
-void saveToFile() {
+// загрузка кругов из файла
+void loadCirclesFromFile() {
+    // открываем поток данных для чтения из файла
+    std::ifstream input(INPUT_PATH1);
+    // очищаем массив точек
+    circles.clear();
+    // пока не достигнут конец файла
+    while (!input.eof()) {
+        int x1, y1, x2,y2;
+        input >> x1; // читаем x1 координату
+        input >> y1; // читаем y1 координату
+        input >> x2; // читаем x2 координату
+        input >> y2; // читаем y2 координату
+        // добавляем в динамический массив точку на основе прочитанных данных
+        circles.emplace_back(Circle(Point(sf::Vector2i(x1, y1), SET_1),Point(sf::Vector2i(x2, y2), SET_1), SET_2));
+    }
+    // закрываем файл
+    input.close();
+}
+
+// запись в файл точек
+void savePointsToFile() {
     // открываем поток данных для записи в файл
     std::ofstream output(OUTPUT_PATH);
 
@@ -251,6 +274,21 @@ void saveToFile() {
     for (auto point: points) {
         // выводим через пробел построчно: x-координату, y-координату и номер множества
         output << point.pos.x << " " << point.pos.y  << std::endl;
+    }
+
+    // закрываем
+    output.close();
+}
+
+// запись в файл точек
+void saveCirclesToFile() {
+    // открываем поток данных для записи в файл
+    std::ofstream output(OUTPUT_PATH1);
+
+    // перебираем точки
+    for (auto circle: circles) {
+        // выводим через пробел построчно: x-координату, y-координату и номер множества
+        output << circle.xpos << " " << circle.ypos <<" "<<circle.rxpos<<" "<<circle.rypos<< std::endl;
     }
 
     // закрываем
@@ -267,9 +305,9 @@ void ShowFiles() {
     // первый элемент в линии
     ImGui::PushID(0);
     // создаём кнопку загрузки
-    if (ImGui::Button("Load")) {
+    if (ImGui::Button("Load Points")) {
         // загружаем данные из файла
-        loadFromFile();
+        loadPointsFromFile();
     }
     // восстанавливаем буфер id
     ImGui::PopID();
@@ -279,9 +317,33 @@ void ShowFiles() {
     // второй элемент
     ImGui::PushID(1);
     // создаём кнопку сохранения
-    if (ImGui::Button("Save")) {
+    if (ImGui::Button("Save Points")) {
         // сохраняем задачу в файл
-        saveToFile();
+        savePointsToFile();
+    }
+    // восстанавливаем буфер id
+    ImGui::PopID();
+
+
+
+    // первый элемент в линии
+    ImGui::PushID(0);
+    // создаём кнопку загрузки
+    if (ImGui::Button("Load Circles")) {
+        // загружаем данные из файла
+        loadCirclesFromFile();
+    }
+    // восстанавливаем буфер id
+    ImGui::PopID();
+
+    // следующий элемент будет на той же строчке
+    ImGui::SameLine();
+    // второй элемент
+    ImGui::PushID(1);
+    // создаём кнопку сохранения
+    if (ImGui::Button("Save Circles")) {
+        // сохраняем задачу в файл
+        saveCirclesToFile();
     }
     // восстанавливаем буфер id
     ImGui::PopID();
